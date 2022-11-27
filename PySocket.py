@@ -73,6 +73,7 @@ class Server:
 
     '''
     Intended as: Public
+
     Call this to start the server
     '''
     def LaunchServer(Self):
@@ -91,6 +92,7 @@ class Server:
 
     '''
     Intended as: Private
+
     Args:
         Client -> Client from Conection
         Addr -> Address from Connection
@@ -131,6 +133,7 @@ class Server:
 
     '''
     Intended as: Private
+
     Args:
         Client -> To Receive Server Message
 
@@ -142,28 +145,52 @@ class Server:
 
     '''
     Intended as: Private
+
     Args:
         clientSender -> Client to send messages on other clients through server
+        message -> message to broadcast
 
     This is called when a new client connects to server
     '''
-    def Broadcast(Self, clientSender: ClientObject, msg: str):
+    def Broadcast(Self, clientSender: ClientObject, message: str):
         for clientObj in Self.ClientObjs:
-            if Self.Commands.OtherCommands(clientSender, clientObj, msg, Self):
+            if Self.Commands.OtherCommands(clientSender, clientObj, message, Self):
                 pass
             else:
-                Self.Commands.NormalMessage(clientSender, clientObj, msg)
+                Self.Commands.NormalMessage(clientSender, clientObj, message)
 
     '''
     Intended as: Private
+
     Args:
-        msg -> message to be printed to console
+        message -> message to be printed to console
     
     This is called when an event happens to the server
     '''
-    def ServerConsole(Self, msg):
-        print(msg)
+    def ServerConsole(Self, message: str):
+        print(message)
 
+    '''
+    Intended as: Public
+
+    Args:
+        message -> set server message
+    
+    Call this to set a custom server message
+    '''
+    def SetServerMessage(Self, message: str):
+        Self.ServerMessage = message
+    
+    '''
+    Intended as: Public
+
+    Args:
+        commands -> set custom server commands
+    
+    Call this to set custom server commands
+    '''
+    def SetCommands(Self, commands: ServerCommands):
+        Self.Commands = commands
 
 class Client:
     def __init__(Self, ServerInfo: tuple[str, int]):
@@ -171,6 +198,11 @@ class Client:
         Self.ServerInfo = ServerInfo
         Self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+    '''
+    Intended as: Public
+    
+    Call this to connect to server
+    '''
     def ConnectToServer(Self) -> bool:
         try:
             Self.s.connect(Self.ServerInfo)
@@ -180,12 +212,22 @@ class Client:
             time.sleep(1.5)
             sys.exit(0)
 
+    '''
+    Intended as: Public
+    
+    Call this to send message to server
+    '''
     def SendToServer(Self, Message):
         Message.strip()
         if len(Message) != 0:
             Message = Message.encode('utf-8')
             Self.s.sendall(Message)
 
+    '''
+    Intended as: Public
+    
+    Call this to receive messages from server
+    '''
     def ClientUpdate(Self):
         Data = Self.s.recv(Self.Limits).decode('utf-8')
         return Data
