@@ -65,16 +65,19 @@ def OtherCommands(ClientSender: ClientObject, ClientReceiver: ClientObject, Mess
         ClientReceiver.getClient().sendall(msgToSend.encode('utf-8'))
         ClassInstance.ServerConsole(msgToSend)
         return True
+    # Check For Length Request
     elif '$Clients$' in Message:
         msgToSend = f'{ClientSender.getAlias()} There are {len(ClassInstance.ClientObjs)} Clients Connected'
         ClientReceiver.getClient().sendall(msgToSend.encode('utf-8'))
         ClassInstance.ServerConsole(msgToSend)
         return True
+    
     return False
 
 SC = ServerCommands(OverrideOtherCommand = OtherCommands)
 
 # Server
 S = Server((socket.gethostbyname(socket.gethostname()), PORT))
+S.SetServerMessage('Welcome to my Server!')
 S.SetCommands(SC)
 S.LaunchServer()
