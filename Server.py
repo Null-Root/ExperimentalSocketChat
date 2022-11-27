@@ -1,4 +1,4 @@
-from PySocket import Server
+from PySocket import Server, ServerCommands, ClientObject
 import socket
 import tkinter
 import time
@@ -55,5 +55,26 @@ Window.mainloop()
 
 print('Starting Server...')
 time.sleep(1.25)
+
+# Server Commands
+def OtherCommands(ClientSender: ClientObject, ClientReceiver: ClientObject, Message: str, ClassInstance: Server) -> bool:
+    if '$Name$' in Message:
+        nName = Message.replace('$Name$', '')
+        msgToSend = f'{ClientSender.getAlias()} transformed to {nName}'
+        ClassInstance.ClientObjs[ClassInstance.ClientObjs.index(ClientSender)].setAlias(nName)
+        ClientReceiver.getClient().sendall(msgToSend.encode('utf-8'))
+        ClassInstance.ServerConsole(msgToSend)
+        return True
+    elif '$Clients$' in Message:
+        msgToSend = f'{ClientSender.getAlias()} There are {len(ClassInstance.ClientObjs)} Clients Connected'
+        ClientReceiver.getClient().sendall(msgToSend.encode('utf-8'))
+        ClassInstance.ServerConsole(msgToSend)
+        return True
+    return False
+
+SC = ServerCommands(OverrideOtherCommand = OtherCommands)
+
+# Server
 S = Server((socket.gethostbyname(socket.gethostname()), PORT))
+S.SetCommands(SC)
 S.LaunchServer()

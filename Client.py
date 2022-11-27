@@ -32,7 +32,7 @@ def OnClick():
 
 # Initialization
 T_Window = tkinter.Tk()
-T_Window.title('Initialize Socket')
+T_Window.title('Configure Client')
 T_Window.geometry('400x400')
 T_Window.configure(background='black')
 T_Window.resizable(0, 0)
