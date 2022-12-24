@@ -18,16 +18,15 @@ def ReadDataFromFile():
         return [line.rstrip() for line in rFile]
 
 def OnClick():
-    global HOST, PORT, IsChangeName, NewName
-    IsChangeName = False
+    global HOST, PORT
+    IP_ADDR = socket.gethostbyname(socket.gethostname())
     if PortList.get(tkinter.ANCHOR) == '':
         PORT = 65432
     else:
         PORT = int(PortList.get(tkinter.ANCHOR))
     if len(H_Entry.get().strip()) != 0:
-        IsChangeName = True
-        NewName = str(H_Entry.get())
-    HOST = socket.gethostbyname(socket.gethostname())
+        IP_ADDR = str(H_Entry.get())
+    HOST = IP_ADDR
     T_Window.destroy()
 
 # Initialization
@@ -44,7 +43,7 @@ F1.pack(pady=10)
 F2.pack(pady=10)
 
 # Label[Host]
-H_Label = tkinter.Label(F1, text='Enter Intended Name <Leave Blank If Default>', bg='black', fg='white')
+H_Label = tkinter.Label(F1, text='Enter IP To Connect <Leave Blank for Own IP>', bg='black', fg='white')
 H_Label.pack()
 
 # Entry[Host]
@@ -74,10 +73,6 @@ T_Window.mainloop()
 # Initialize Client
 C = Client((HOST, PORT))
 C.ConnectToServer()
-
-# Request Change of Name
-if IsChangeName:
-    C.SendToServer('$<NewName>$' + NewName)
 
 ############################################# <MAIN> #############################################
 
